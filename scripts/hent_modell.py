@@ -30,7 +30,7 @@ STANDARD_UT = Path(__file__).resolve().parent.parent / "web" / "model"
 
 def hent(url: str, fil: Path) -> None:
     """Last ned ``url`` til ``fil`` med framdrift på samme linje."""
-    with urllib.request.urlopen(url, timeout=120) as svar:  # noqa: S310 - fast vert
+    with urllib.request.urlopen(url, timeout=120) as svar:
         total = int(svar.headers.get("content-length") or 0)
         tmp = fil.with_suffix(fil.suffix + ".del")
         mottatt = 0
