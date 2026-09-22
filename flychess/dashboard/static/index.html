@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>fly-chess · training dashboard</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cellipse cx='11' cy='13' rx='9' ry='4.5' fill='%23f0b232' opacity='.7' transform='rotate(-30 11 13)'/%3E%3Cellipse cx='21' cy='13' rx='9' ry='4.5' fill='%23f0b232' opacity='.7' transform='rotate(30 21 13)'/%3E%3Cellipse cx='16' cy='18' rx='4' ry='9' fill='%237ed957'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/static/dashboard.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand" title="fly-chess">
+    <svg class="fly" viewBox="0 0 64 64" aria-hidden="true">
+      <g class="wings">
+        <ellipse cx="22" cy="24" rx="18" ry="8" transform="rotate(-28 22 24)"/>
+        <ellipse cx="42" cy="24" rx="18" ry="8" transform="rotate(28 42 24)"/>
+      </g>
+      <ellipse class="body" cx="32" cy="36" rx="7" ry="18"/>
+      <circle class="eye" cx="28" cy="20" r="3"/><circle class="eye" cx="36" cy="20" r="3"/>
+      <path class="legs" d="M25 40 l-9 6 M25 46 l-8 8 M39 40 l9 6 M39 46 l8 8 M27 33 l-10 -2 M37 33 l10 -2"/>
+    </svg>
+    <div class="brand-text"><span class="name">fly-chess</span><span class="sub">training dashboard</span></div>
+  </div>
+
+  <label class="run-picker">
+    <span>run</span>
+    <select id="run-select" aria-label="run"><option value="">— no runs —</option></select>
+  </label>
+
+  <div class="status" id="status">
+    <div class="chip"><span class="k">stage</span><span class="v" id="st-stage">–</span></div>
+    <div class="chip"><span class="k">step</span><span class="v mono" id="st-step">–</span></div>
+    <div class="chip"><span class="k">eta</span><span class="v mono" id="st-eta">–</span></div>
+    <div class="chip"><span class="k">gpu</span><span class="v mono" id="st-gpu">–</span></div>
+    <div class="chip"><span class="k">pos/s</span><span class="v mono" id="st-pps">–</span></div>
+    <div class="chip"><span class="k">epoch</span><span class="v mono" id="st-epoch">–</span></div>
+    <div class="chip conn" id="st-conn" data-state="idle"><span class="dot"></span><span class="v" id="st-conn-text">idle</span></div>
+  </div>
+  <div class="progress"><div class="bar" id="progress-bar"></div></div>
+</header>
+
+<main>
+  <section class="charts" id="charts">
+    <div class="panel chart" data-chart="loss"></div>
+    <div class="panel chart" data-chart="acc"></div>
+    <div class="panel chart" data-chart="lr"></div>
+    <div class="panel chart" data-chart="throughput"></div>
+    <div class="panel chart" data-chart="elo"></div>
+    <div class="panel chart" data-chart="value"></div>
+  </section>
+
+  <section class="bottom">
+    <div class="panel game" id="game-panel">
+      <div class="panel-head">
+        <h3>latest game <span class="muted" id="game-meta"></span></h3>
+        <div class="controls">
+          <button id="game-play" class="btn" title="play / pause">▶</button>
+          <input id="game-slider" type="range" min="0" max="0" value="0" aria-label="ply">
+          <span class="mono" id="game-ply">0 / 0</span>
+        </div>
+      </div>
+      <div class="game-body">
+        <div class="board-wrap"><svg id="board" viewBox="0 0 360 360" role="img" aria-label="chess board"></svg></div>
+        <div class="pgn-wrap"><pre id="pgn" class="pgn">no game yet — the fly has not played a sample game</pre></div>
+      </div>
+    </div>
+
+    <div class="panel activity" id="activity-panel">
+      <div class="panel-head">
+        <h3>neuron activity <span class="muted" id="activity-meta"></span></h3>
+        <div class="controls"><span class="legend-ramp" title="low → high activity"></span></div>
+      </div>
+      <canvas id="activity"></canvas>
+      <div class="activity-note muted" id="activity-note">waiting for an activity sample…</div>
+    </div>
+
+    <div class="panel log" id="log-panel">
+      <div class="panel-head"><h3>log</h3><div class="controls"><label class="muted small"><input type="checkbox" id="log-follow" checked> follow</label></div></div>
+      <div id="log" class="log-lines"></div>
+    </div>
+  </section>
+
+  <footer class="muted small">
+    <span id="run-info">–</span> · FlyWire connectome (Dorkenwald et al. 2024, Schlegel et al. 2024) · the fly brain is the player
+  </footer>
+</main>
+
+<div id="tooltip" class="tooltip" hidden></div>
+<script src="/static/chartmath.js"></script>
+<script src="/static/dashboard.js"></script>
+</body>
+</html>

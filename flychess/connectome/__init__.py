@@ -1,0 +1,60 @@
+"""FlyWire connectome: download, parse, and select the subgraph the model runs on (SPEC §2)."""
+from .download import DEFAULT_FILES, download_connectome, download_games
+from .graph import (
+    NT_SIGN,
+    BrainGraph,
+    GraphConfig,
+    build_brain_graph,
+    edge_signs,
+    graph_path,
+    load_or_build,
+    neuron_nt_type,
+    toy_graph,
+)
+from .load import (
+    COLUMN_FILE,
+    ColumnTable,
+    Connectome,
+    load_column_assignment,
+    load_connectome,
+    parse_connectome,
+)
+from .retina import (
+    PARTNER_TYPES,
+    RETINA_TYPES,
+    EyeMap,
+    RetinaCandidates,
+    build_eye_map,
+    build_retina,
+    hex_to_xy,
+    retina_candidates,
+)
+
+__all__ = [
+    "COLUMN_FILE",
+    "DEFAULT_FILES",
+    "NT_SIGN",
+    "PARTNER_TYPES",
+    "RETINA_TYPES",
+    "BrainGraph",
+    "ColumnTable",
+    "Connectome",
+    "EyeMap",
+    "GraphConfig",
+    "RetinaCandidates",
+    "build_brain_graph",
+    "build_eye_map",
+    "build_retina",
+    "download_connectome",
+    "download_games",
+    "edge_signs",
+    "graph_path",
+    "hex_to_xy",
+    "load_column_assignment",
+    "load_connectome",
+    "load_or_build",
+    "neuron_nt_type",
+    "parse_connectome",
+    "retina_candidates",
+    "toy_graph",
+]
