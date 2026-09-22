@@ -1,0 +1,1027 @@
+/* ==========================================================================
+   Fluesjakk — design system
+   --------------------------------------------------------------------------
+   Mørk, rolig og litt biologisk. Brettet er alltid det lyseste og viktigste
+   elementet på skjermen; alt annet holder seg i bakgrunnen.
+
+   Struktur:
+     1. Tokens            6. Skjema (landing)
+     2. Grunnstiler       7. Parti (spill)
+     3. Typografi         8. Brett
+     4. Skall og topp     9. Fluepanel og hjerne
+     5. Knapper/input    10. Dialoger, responsivt, bevegelse
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- 1. Tokens */
+:root {
+  color-scheme: dark;
+
+  /* flater, mørkest først */
+  --bg: #08090a;
+  --surface: #101214;
+  --surface-2: #171a1d;
+  --surface-3: #1f2429;
+  --line: #262c32;
+  --line-2: #39424a;
+
+  /* tekst */
+  --text: #eef1f3;
+  --dim: #a4adb4;
+  --muted: #838c94;
+
+  /* aksenter */
+  --lime: #b6f04a;
+  --lime-soft: #d8ff96;
+  --lime-deep: #7fae2f;
+  --amber: #ffb454;
+  --blue: #6cc6ea;
+  --danger: #ff6b5e;
+  --info: #58d3e8;
+
+  /* brettet */
+  --sq-light: #56636e;
+  --sq-dark: #252d35;
+  --piece-w: #f0f3f5;
+  --piece-w-ink: #1a2026;
+  --piece-b: #131820;
+  --piece-b-ink: #b9c4cd;
+  --hl-last: rgba(255, 180, 84, .30);
+  --hl-check: rgba(255, 107, 94, .55);
+  --hl-selected: rgba(182, 240, 74, .40);
+  /* Koordinatene ligger oppå rutene, så de trenger sin egen farge med reell kontrast
+     mot både den lyse og den mørke ruten. */
+  --coord-on-light: #e4ebf0;
+  --coord-on-dark: #cfd8de;
+
+  /* form */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 18px;
+  --r-xl: 26px;
+
+  --pad: clamp(14px, 2.2vw, 28px);
+  --shadow: 0 18px 50px rgba(0, 0, 0, .55);
+  --shadow-sm: 0 6px 18px rgba(0, 0, 0, .35);
+
+  /* typografi */
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, monospace;
+
+  --maxw: 1440px;
+  --dur: .19s;
+  --ease: cubic-bezier(.22, .61, .36, 1);
+}
+
+/* Brettemaer — bare fargene byttes, geometrien er den samme. */
+:root[data-tema="skifer"] {
+  --sq-light: #4b5560; --sq-dark: #20272e;
+  --lime: #8fd4ff; --lime-soft: #c2e9ff; --lime-deep: #4d92ba;
+}
+:root[data-tema="skog"] {
+  --sq-light: #4a5a4a; --sq-dark: #1e2a20;
+  --lime: #b6f04a; --lime-soft: #d8ff96; --lime-deep: #7fae2f;
+}
+
+/* ---------------------------------------------------------------- 2. Grunnstiler */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Den biologiske teksturen: to svake gløder og et knapt synlig rutenett.
+   Bevisst nesten usynlig — den skal kjennes, ikke sees. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(1100px 620px at 78% -12%, rgba(182, 240, 74, .07), transparent 68%),
+    radial-gradient(880px 560px at 4% 108%, rgba(88, 211, 232, .05), transparent 66%);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: .5;
+  background-image: radial-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px);
+  background-size: 26px 26px;
+  mask-image: radial-gradient(1200px 800px at 50% 0%, #000 20%, transparent 78%);
+}
+
+[hidden] { display: none !important; }
+
+::selection { background: var(--lime); color: var(--bg); }
+
+/* Synlig fokus overalt — tastaturnavigasjon skal alltid være mulig å følge. */
+:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* ---------------------------------------------------------------- 3. Typografi */
+h1, h2, h3 { margin: 0; font-weight: 640; letter-spacing: -.02em; line-height: 1.12; }
+h1 { font-size: clamp(2.1rem, 5.2vw, 3.9rem); }
+h2 { font-size: clamp(1.35rem, 2.6vw, 1.9rem); }
+h3 { font-size: 1.05rem; }
+p { margin: 0 0 .85em; }
+p:last-child { margin-bottom: 0; }
+
+a { color: var(--lime); text-decoration-color: rgba(182, 240, 74, .4); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--lime); }
+
+.mono { font-family: var(--mono); font-size: .78rem; letter-spacing: .02em; }
+.dim { color: var(--dim); }
+.muted { color: var(--muted); }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: .7rem;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+  color: var(--lime);
+  margin: 0 0 .7em;
+}
+
+/* ---------------------------------------------------------------- 4. Skall */
+.shell {
+  position: relative;
+  z-index: 1;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 var(--pad);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0 14px;
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(14px);
+}
+
+.merke {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-weight: 680;
+  font-size: 1.16rem;
+  letter-spacing: -.03em;
+  color: var(--text);
+  text-decoration: none;
+  background: none;
+  border: 0;
+  padding: 6px 4px;
+  cursor: pointer;
+  border-radius: var(--r-sm);
+}
+.merke .flue-merke { width: 30px; height: 30px; color: var(--lime); flex: none; }
+.merke em { font-style: normal; color: var(--lime); }
+
+.topbar .spacer { flex: 1; }
+
+/* specimensjetonen: tekniske fakta om modellen, alltid tilgjengelig, aldri i veien */
+.specimen {
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 46vw;
+}
+.specimen b { color: var(--dim); font-weight: 600; }
+
+.topbar-handlinger { display: flex; gap: 6px; align-items: center; }
+
+/* ---------------------------------------------------------------- 5. Knapper */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font: inherit;
+  font-size: .9rem;
+  font-weight: 560;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-md);
+  padding: 9px 15px;
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease), transform var(--dur) var(--ease), color var(--dur) var(--ease);
+  white-space: nowrap;
+}
+.btn:hover:not(:disabled) { background: var(--surface-3); border-color: var(--line-2); }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--lime);
+  border-color: var(--lime);
+  color: #0a0d06;
+  font-weight: 680;
+}
+.btn-primary:hover:not(:disabled) { background: var(--lime-soft); border-color: var(--lime-soft); }
+
+.btn-ghost { background: transparent; border-color: transparent; color: var(--dim); }
+.btn-ghost:hover:not(:disabled) { background: var(--surface-2); color: var(--text); }
+
+.btn-danger { color: var(--danger); border-color: rgba(255, 107, 94, .35); background: transparent; }
+.btn-danger:hover:not(:disabled) { background: rgba(255, 107, 94, .12); }
+
+.btn-big { font-size: 1.02rem; padding: 14px 30px; border-radius: var(--r-lg); }
+.btn-small { font-size: .8rem; padding: 6px 11px; border-radius: var(--r-sm); }
+.btn-icon { padding: 9px 11px; }
+
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field-label { font-size: .78rem; font-weight: 560; color: var(--dim); }
+
+.input {
+  font: inherit;
+  font-size: .92rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-md);
+  padding: 9px 12px;
+  width: 100%;
+}
+.input::placeholder { color: var(--muted); }
+.input:focus { border-color: var(--lime); outline: none; }
+
+/* segmentert velger (fargevalg) */
+.seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--r-md); padding: 3px; gap: 3px; }
+.seg label { position: relative; }
+.seg input { position: absolute; opacity: 0; width: 0; height: 0; }
+.seg span {
+  display: block;
+  padding: 7px 15px;
+  border-radius: 9px;
+  font-size: .86rem;
+  font-weight: 560;
+  color: var(--dim);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.seg input:checked + span { background: var(--surface-3); color: var(--text); }
+.seg input:focus-visible + span { outline: 2px solid var(--lime); outline-offset: 1px; }
+
+/* ---------------------------------------------------------------- 6. Skjema */
+.screen { flex: 1; padding: 34px 0 40px; }
+.screen[hidden] { display: none; }
+
+/* --- forside --- */
+.hero { text-align: center; max-width: 760px; margin: 0 auto clamp(28px, 5vw, 52px); }
+
+.hero-flue {
+  width: clamp(96px, 15vw, 148px);
+  height: clamp(96px, 15vw, 148px);
+  margin: 0 auto 18px;
+  color: var(--lime);
+  filter: drop-shadow(0 0 34px rgba(182, 240, 74, .22));
+}
+.hero h1 { margin-bottom: .35em; }
+.hero h1 em { font-style: normal; color: var(--lime); }
+.lede { font-size: clamp(1rem, 1.5vw, 1.12rem); color: var(--dim); max-width: 62ch; margin: 0 auto; }
+.lede b { color: var(--text); font-weight: 620; }
+
+.fakta {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 0;
+  margin: 22px 0 0;
+}
+.fakta li {
+  font-family: var(--mono);
+  font-size: .7rem;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 12px;
+  background: var(--surface);
+}
+
+/* vanskelighetskort — tre kort side om side, ikke en radioliste */
+.valg { max-width: 1020px; margin: 0 auto; }
+.valg-tittel { text-align: center; margin-bottom: 18px; }
+
+.kort-rad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+.kort {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 20px 18px 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.kort:hover { border-color: var(--line-2); background: var(--surface-2); transform: translateY(-2px); }
+.kort input { position: absolute; opacity: 0; width: 0; height: 0; }
+.kort-ikon { font-size: 1.75rem; line-height: 1; }
+.kort-navn { font-size: 1.06rem; font-weight: 640; }
+.kort-kort { font-size: .84rem; color: var(--dim); }
+.kort-tekst { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+
+.kort:has(input:checked) {
+  border-color: var(--lime);
+  background: color-mix(in srgb, var(--lime) 7%, var(--surface));
+  box-shadow: 0 0 0 1px var(--lime), 0 14px 34px rgba(182, 240, 74, .1);
+}
+.kort:has(input:focus-visible) { outline: 2px solid var(--lime); outline-offset: 2px; }
+.kort:has(input:checked) .kort-navn { color: var(--lime); }
+
+.oppsett-rad {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: flex-end;
+  justify-content: center;
+  margin-top: 22px;
+}
+.oppsett-start { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 26px; }
+
+/* nedlastingslinje */
+.fremdrift { width: min(420px, 80vw); }
+.fremdrift .bar { height: 6px; background: var(--surface-3); border-radius: 999px; overflow: hidden; }
+.fremdrift .bar-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--lime-deep), var(--lime));
+  transition: width .18s var(--ease);
+}
+.fremdrift-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--muted);
+  margin-top: 8px;
+}
+.lastefeil {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 107, 94, .35);
+  background: rgba(255, 107, 94, .07);
+  border-radius: var(--r-md);
+  color: var(--dim);
+  font-size: .88rem;
+  text-align: left;
+}
+
+/* ---------------------------------------------------------------- 7. Parti */
+.game {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: clamp(16px, 2.4vw, 30px);
+  align-items: start;
+}
+
+.board-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+
+.board-head, .board-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 30px;
+}
+
+.spiller {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: .88rem;
+  color: var(--dim);
+  min-width: 0;
+}
+.spiller b { color: var(--text); font-weight: 620; }
+.spiller .prikk {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--surface-3);
+  border: 1.5px solid var(--line-2);
+  flex: none;
+}
+.spiller[data-side="w"] .prikk { background: var(--piece-w); border-color: var(--piece-w-ink); }
+.spiller[data-side="b"] .prikk { background: var(--piece-b); border-color: var(--piece-b-ink); }
+.spiller.aktiv .prikk { box-shadow: 0 0 0 3px rgba(182, 240, 74, .25); }
+
+.tur-merke {
+  font-family: var(--mono);
+  font-size: .66rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--lime);
+}
+
+.status {
+  font-size: .92rem;
+  color: var(--dim);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.status.over { color: var(--text); font-weight: 600; }
+.status.feil { color: var(--danger); }
+
+/* Brettet skal alltid være kvadratisk og alltid få plass på skjermen. Bredden begrenses av
+   både kolonnen og vinduets høyde, med god margin til topplinje, spilleretiketter og
+   hjernevisningen under. */
+.board-frame {
+  position: relative;
+  border-radius: var(--r-lg);
+  padding: 10px;
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  width: min(100%, calc(100dvh - 260px));
+  margin-inline: auto;
+}
+@supports not (height: 100dvh) {
+  .board-frame { width: min(100%, calc(100vh - 260px)); }
+}
+
+/* --- sidepanel --- */
+.side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 16px;
+}
+
+/* fluepanelet */
+.flue-topp { display: flex; align-items: center; gap: 13px; }
+.flue-avatar {
+  width: 62px; height: 62px;
+  flex: none;
+  color: var(--lime);
+  transition: color var(--dur) var(--ease);
+}
+.flue-navn { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.flue-navn .navn { font-weight: 640; font-size: .98rem; }
+.flue-navn .humor {
+  font-family: var(--mono);
+  font-size: .7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--lime);
+}
+
+.kommentar {
+  margin-top: 13px;
+  font-size: .89rem;
+  color: var(--dim);
+  min-height: 3.4em;
+  transition: opacity var(--dur) var(--ease);
+}
+.kommentar.fade { opacity: .35; }
+
+/* verdimåleren: et speil for verdihodet, ikke en sjakkmotorvurdering */
+.verdi { margin-top: 14px; }
+.verdi-topp { display: flex; justify-content: space-between; font-family: var(--mono); font-size: .66rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+.verdi-spor {
+  position: relative;
+  height: 7px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 107, 94, .5), var(--surface-3) 50%, rgba(182, 240, 74, .5));
+}
+.verdi-null { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--line-2); }
+.verdi-prikk {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 13px; height: 13px;
+  margin: -6.5px 0 0 -6.5px;
+  border-radius: 50%;
+  background: var(--text);
+  border: 3px solid var(--surface);
+  box-shadow: 0 0 12px rgba(255, 255, 255, .35);
+  transition: left .28s var(--ease);
+}
+
+/* Selve fluefiguren. Den arver fargen sin fra forelderen (currentColor), så humøret kan
+   bytte farge uten at figuren må tegnes på nytt. */
+.flue-hode, .flue-bryst, .flue-bakkropp { fill: currentColor; }
+.flue-oyne ellipse { fill: color-mix(in srgb, var(--bg) 78%, currentColor); }
+.flue-oyne .flue-glans { fill: rgba(255, 255, 255, .30); }
+.flue-vinger path {
+  fill: color-mix(in srgb, currentColor 22%, transparent);
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linejoin: round;
+}
+.flue-antemer path { stroke: currentColor; stroke-width: 3.2; stroke-linecap: round; fill: none; }
+.flue-antemer circle { fill: currentColor; }
+.flue .mouth, .mouth { stroke: var(--bg); stroke-width: 5; stroke-linecap: round; fill: none; }
+
+/* Vingene dirrer mens flua tenker. */
+.flue-avatar[data-humor="tenker"] .flue-vinger { animation: vinge-dirr .18s linear infinite alternate; transform-origin: 100px 122px; }
+@keyframes vinge-dirr { from { transform: scaleY(1); } to { transform: scaleY(.82); } }
+.hero-flue .flue-vinger { animation: vinge-flagre 5s ease-in-out infinite; transform-origin: 100px 122px; }
+@keyframes vinge-flagre { 0%, 82%, 100% { transform: scaleY(1); } 88%, 94% { transform: scaleY(.86); } }
+
+/* humørfarger */
+.flue-avatar[data-humor="selvgod"] { color: var(--lime); }
+.flue-avatar[data-humor="trygg"] { color: var(--lime-soft); }
+.flue-avatar[data-humor="nysgjerrig"] { color: var(--dim); }
+.flue-avatar[data-humor="nervos"] { color: var(--amber); }
+.flue-avatar[data-humor="panikk"] { color: var(--danger); }
+
+/* trekkliste */
+.trekk-panel { display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; }
+.trekk-liste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: var(--mono);
+  font-size: .82rem;
+  max-height: 240px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-2) transparent;
+}
+.trekk-liste li { display: grid; grid-template-columns: 2.2em 1fr 1fr; gap: 6px; padding: 3px 4px; border-radius: 6px; }
+.trekk-liste li:nth-child(odd) { background: rgba(255, 255, 255, .022); }
+.trekk-liste .nr { color: var(--muted); }
+.trekk-liste .san { color: var(--dim); }
+.trekk-liste .san.flue { color: var(--lime); }
+.trekk-liste .san.nå { color: var(--text); font-weight: 640; }
+.trekk-liste li.tom {
+  display: block;
+  color: var(--muted);
+  padding: 10px 4px;
+  background: none;
+  font-family: var(--sans);
+  font-size: .82rem;
+}
+
+.handlinger { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.handlinger .bred { grid-column: 1 / -1; }
+
+.klokke { display: flex; gap: 16px; font-family: var(--mono); font-size: .72rem; color: var(--muted); flex-wrap: wrap; }
+.klokke b { color: var(--dim); font-weight: 600; }
+.klokke span { display: block; }
+
+/* ---------------------------------------------------------------- 8. Brett */
+.cb-host { width: 100%; aspect-ratio: 1; }
+
+.cb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  touch-action: none;
+  cursor: pointer;
+}
+.cb:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+.cb-locked { cursor: default; }
+
+.cb-light { fill: var(--sq-light); }
+.cb-dark { fill: var(--sq-dark); }
+
+.cb-coord {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 600;
+  pointer-events: none;
+  user-select: none;
+}
+.cb-coord.on-light { fill: var(--coord-on-light); }
+.cb-coord.on-dark { fill: var(--coord-on-dark); }
+
+.cb-piece {
+  stroke-width: 3.2;
+  stroke-linejoin: round;
+  transition: transform .19s var(--ease);
+  pointer-events: none;
+}
+.cb-w { fill: var(--piece-w); stroke: var(--piece-w-ink); }
+.cb-w .ink { fill: var(--piece-w-ink); stroke: var(--piece-w-ink); }
+.cb-b { fill: var(--piece-b); stroke: var(--piece-b-ink); }
+.cb-b .ink { fill: var(--piece-b-ink); stroke: var(--piece-b-ink); }
+
+.cb-dragging { cursor: grabbing; filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .6)); transition: none; }
+.cb-static { transition: none; }
+
+.cb-appear { animation: cb-inn .2s var(--ease); }
+@keyframes cb-inn { from { opacity: 0; } to { opacity: 1; } }
+.cb-vanish { opacity: 0; transition: opacity .16s linear; }
+
+/* markeringer */
+.cb-last { fill: var(--hl-last); pointer-events: none; }
+.cb-check { fill: var(--hl-check); pointer-events: none; }
+.cb-selected { fill: var(--hl-selected); pointer-events: none; }
+.cb-cursor { fill: none; stroke: var(--lime); stroke-width: 4; pointer-events: none; }
+
+/* lovlige trekk */
+.cb-dot { fill: var(--lime); opacity: .5; pointer-events: none; }
+.cb-capture { fill: none; stroke: var(--lime); stroke-width: 7; opacity: .55; }
+
+/* bondeforvandling */
+.cb-promo-veil { fill: rgba(8, 9, 10, .74); }
+.cb-promo-choice rect { fill: var(--surface-2); stroke: var(--lime); stroke-width: 2; cursor: pointer; }
+.cb-promo-choice:hover rect, .cb-promo-choice:focus rect { fill: var(--surface-3); }
+.cb-promo-choice:focus { outline: none; }
+
+/* ---------------------------------------------------------------- 9. Flue og hjerne */
+.strip {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 12px;
+  margin-top: clamp(16px, 2.4vw, 26px);
+}
+
+.viz-panel { padding: 14px 16px; }
+.viz-topp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: .7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.brainviz { position: relative; background: #0b0d0f; border-radius: var(--r-md); overflow: hidden; }
+.brainviz canvas { display: block; width: 100%; }
+#brain-canvas { height: 220px; }
+.strip-canvas { height: 76px; margin-top: 8px; }
+
+.replay { display: flex; align-items: center; gap: 10px; margin-top: 9px; }
+.replay-btn {
+  width: 30px; height: 30px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line-2);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+  font-size: .72rem;
+}
+.replay-scrub { flex: 1; accent-color: var(--lime); min-width: 60px; }
+.replay-steg { font-family: var(--mono); font-size: .72rem; color: var(--muted); white-space: nowrap; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 10px; }
+.legend span { font-family: var(--mono); font-size: .68rem; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+.legend span::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--c, var(--muted)); }
+
+/* øyepanelet */
+.oye-panel { display: flex; flex-direction: column; gap: 10px; }
+.oye-visning { position: relative; background: #0b0d0f; border-radius: var(--r-md); overflow: hidden; }
+.oye-visning canvas { display: block; width: 100%; height: 170px; }
+.oye-tip {
+  position: absolute;
+  left: 8px; bottom: 8px;
+  background: rgba(8, 9, 10, .92);
+  border: 1px solid var(--line-2);
+  border-radius: 7px;
+  padding: 4px 8px;
+  font-family: var(--mono);
+  font-size: .68rem;
+  color: var(--dim);
+  pointer-events: none;
+}
+.oye-tekst { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+
+.oye-modus { display: inline-flex; gap: 3px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 2px; }
+.oye-modus button {
+  font: inherit;
+  font-family: var(--mono);
+  font-size: .64rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  padding: 4px 9px;
+  cursor: pointer;
+}
+.oye-modus button[aria-pressed="true"] { background: var(--surface-3); color: var(--lime); }
+
+/* teknisk modus */
+.teknisk-rutenett {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px 18px;
+  font-family: var(--mono);
+  font-size: .74rem;
+}
+.teknisk-rutenett dt { color: var(--muted); font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; }
+.teknisk-rutenett dd { margin: 2px 0 0; color: var(--dim); }
+.teknisk-rutenett dd b { color: var(--text); font-weight: 600; }
+
+/* ---------------------------------------------------------------- 10. Dialoger m.m. */
+dialog {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--r-xl);
+  padding: 0;
+  max-width: min(680px, 92vw);
+  width: 100%;
+  box-shadow: var(--shadow);
+}
+dialog::backdrop { background: rgba(4, 5, 6, .74); backdrop-filter: blur(3px); }
+.dialog-body { padding: clamp(20px, 3vw, 30px); max-height: 86vh; overflow-y: auto; }
+.dialog-body.prose { font-size: .94rem; }
+.dialog-body.prose h2 { margin-bottom: .5em; }
+.dialog-body.prose h3 { margin: 1.4em 0 .4em; color: var(--lime); }
+.dialog-body.prose p { color: var(--dim); }
+.dialog-rad { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 20px; align-items: center; }
+
+.delt-bilde { width: 100%; border-radius: var(--r-md); margin: 14px 0; border: 1px solid var(--line); }
+
+.tabell-wrap { overflow-x: auto; margin: 12px 0; }
+table { border-collapse: collapse; width: 100%; font-family: var(--mono); font-size: .78rem; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { color: var(--muted); font-weight: 600; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; }
+td.vinner { color: var(--lime); }
+td.tap { color: var(--danger); }
+td.remis { color: var(--amber); }
+td.tom { color: var(--muted); text-align: center; padding: 22px; white-space: normal; }
+
+.varsel {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  background: var(--surface-3);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-md);
+  padding: 10px 16px;
+  font-size: .86rem;
+  box-shadow: var(--shadow-sm);
+  z-index: 60;
+}
+
+.sidefot {
+  margin-top: auto;
+  padding: 22px 0 28px;
+  border-top: 1px solid var(--line);
+  font-size: .76rem;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  justify-content: space-between;
+}
+.sidefot p { margin: 0; }
+
+/* ---------------------------------------------------------------- 11. Responsivt */
+@media (max-width: 1080px) {
+  .game { grid-template-columns: minmax(0, 1fr); }
+  /* Én kolonne: brettet først, så fluepanelet og trekklisten, så hjernevisningen. */
+  .board-col { order: 0; }
+  .side { order: 1; }
+  .strip { order: 2; grid-template-columns: minmax(0, 1fr); }
+  .trekk-liste { max-height: 200px; }
+  .specimen { display: none; }
+  .board-frame { width: min(100%, calc(100dvh - 200px)); }
+}
+
+@media (max-width: 720px) {
+  :root { --pad: 13px; }
+
+  /* Topplinjen får to rader: merket øverst, menyen under. Da flyter ingenting over kanten. */
+  .topbar { flex-wrap: wrap; gap: 8px; padding-bottom: 10px; }
+  .topbar .spacer { display: none; }
+  .topbar-handlinger {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .topbar-handlinger::-webkit-scrollbar { display: none; }
+  .topbar-handlinger .btn { padding: 7px 9px; font-size: .82rem; }
+
+  .kort-rad { grid-template-columns: 1fr; }
+  .kort { flex-direction: row; align-items: center; gap: 13px; padding: 14px; }
+  .kort-tekst { display: none; }
+  .kort-ikon { font-size: 1.5rem; }
+  .oppsett-rad { flex-direction: column; align-items: stretch; }
+  .handlinger { grid-template-columns: 1fr 1fr; }
+  .merke { font-size: 1.05rem; }
+  #brain-canvas { height: 168px; }
+  .hero { margin-bottom: 26px; }
+  .board-frame { width: 100%; padding: 7px; }
+  .dialog-rad .btn { flex: 1 1 auto; }
+}
+
+/* Svært smale skjermer: brette må fortsatt være brukbart. */
+@media (max-width: 400px) {
+  .cb-coord { font-size: 13px; }
+  .board-frame { padding: 6px; }
+}
+
+/* ---------------------------------------------------------------- 12. Bevegelse */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Brukeren kan slå av animasjoner i innstillingene også. */
+:root[data-bevegelse="av"] *, :root[data-bevegelse="av"] *::before, :root[data-bevegelse="av"] *::after {
+  animation-duration: .001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: .001ms !important;
+}
+:root[data-bevegelse="av"] .flue-vinger { animation: none !important; }
+
+/* ---------------------------------------------------------------- 13. Innstillinger */
+.innstillinger-liste { display: flex; flex-direction: column; gap: 2px; margin: 4px 0 8px; }
+
+.innstilling-rad {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 12px;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease);
+}
+.innstilling-rad:hover { background: var(--surface-2); }
+.innstilling-rad input {
+  flex: none;
+  width: 18px; height: 18px;
+  margin-top: 2px;
+  accent-color: var(--lime);
+  cursor: pointer;
+}
+.innstilling-rad > span { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.innstilling-navn { font-size: .92rem; font-weight: 560; }
+.innstilling-hjelp { font-size: .78rem; color: var(--muted); line-height: 1.45; }
+
+/* ---------------------------------------------------------------- 14. Vennelag */
+.vennelag-liste {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  font-size: .82rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.vennelag-liste li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px 8px;
+  border-radius: 7px;
+  color: var(--muted);
+}
+.vennelag-liste li .res { font-family: var(--mono); font-size: .72rem; }
+.vennelag-liste li.naa { background: color-mix(in srgb, var(--lime) 10%, transparent); color: var(--text); }
+.vennelag-liste li.ferdig { color: var(--dim); }
+.vennelag-bar .btn { margin-top: 10px; }
+
+/* ---------------------------------------------------------------- 15. Slik fungerer det */
+.slik { max-width: 780px; margin: 0 auto; }
+.slik-topp { margin-bottom: clamp(26px, 4vw, 44px); }
+.slik-topp h1 { margin-bottom: .35em; }
+
+.slik-seksjon { margin: 0 0 clamp(30px, 4.5vw, 52px); }
+.slik-seksjon h2 {
+  margin-bottom: .6em;
+  padding-bottom: .35em;
+  border-bottom: 1px solid var(--line);
+}
+.slik-seksjon h3 { margin: 1.5em 0 .35em; color: var(--lime); }
+.slik-seksjon p { color: var(--dim); }
+.slik-seksjon b { color: var(--text); font-weight: 620; }
+.slik-seksjon code {
+  font-family: var(--mono);
+  font-size: .86em;
+  background: var(--surface-3);
+  border-radius: 5px;
+  padding: 2px 6px;
+  color: var(--lime-soft);
+}
+
+/* rørledningen */
+.flyt { list-style: none; counter-reset: steg; margin: 0 0 20px; padding: 0; display: flex; flex-direction: column; }
+.flyt li {
+  counter-increment: steg;
+  position: relative;
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 4px 14px;
+  padding: 0 0 20px 0;
+}
+.flyt li::before {
+  content: counter(steg);
+  grid-row: span 2;
+  width: 34px; height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line-2);
+  background: var(--surface-2);
+  font-family: var(--mono);
+  font-size: .8rem;
+  color: var(--lime);
+}
+/* den stiplede linjen nedover mellom stegene */
+.flyt li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 38px;
+  bottom: 2px;
+  width: 1px;
+  background: repeating-linear-gradient(180deg, var(--line-2) 0 4px, transparent 4px 9px);
+}
+.flyt-tittel { font-weight: 620; align-self: center; }
+.flyt-forklaring { grid-column: 2; font-size: .87rem; color: var(--muted); }
+
+/* faktabokser */
+.bokser {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 22px 0 4px;
+}
+.boks {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 15px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+.boks b { font-size: 1.32rem; font-weight: 660; color: var(--lime); font-family: var(--mono); letter-spacing: -.02em; }
+.boks span { font-size: .78rem; color: var(--muted); }
+
+/* punktlister */
+.punktliste { margin: 0 0 1em; padding-left: 1.15em; color: var(--dim); }
+.punktliste li { margin-bottom: .45em; }
+.punktliste.nummerert { list-style: decimal; }
+.punktliste.nummerert li::marker { color: var(--lime); font-family: var(--mono); font-size: .85em; }
+
+/* tabellen på slik-siden */
+.slik-tabell { font-family: var(--sans); font-size: .88rem; }
+.slik-tabell th, .slik-tabell td { white-space: normal; padding: 9px 12px; }
+.slik-tabell td { color: var(--dim); }
+.slik-tabell td.ja { color: var(--amber); }
+.slik-tabell td.nei { color: var(--lime); }
+
+.slik-avslutning {
+  text-align: center;
+  padding: 34px 0 10px;
+  border-top: 1px solid var(--line);
+}
+
+@media print {
+  .topbar, .side, .strip, .sidefot, .slik-avslutning { display: none; }
+}

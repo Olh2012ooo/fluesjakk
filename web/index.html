@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="nb" data-bevegelse="på">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Fluesjakk — sjakk mot en flue</title>
+
+  <!-- Hvor modellen ligger. Kan peke på en relativ mappe eller en full nettadresse. -->
+  <meta name="flue-modell-base" content="model/">
+
+  <meta name="description" content="Spill sjakk mot et nevralt nettverk koblet nøyaktig som hjernen til en fruktflue. Alt kjører lokalt på din egen datamaskin.">
+  <meta name="theme-color" content="#08090a">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ============================ topplinje ============================ -->
+  <header class="topbar">
+    <button class="merke" id="btn-merke" type="button" title="Til forsiden">
+      <span class="flue-merke" id="merke-logo" aria-hidden="true"></span>
+      <span>Flue<em>sjakk</em></span>
+    </button>
+
+    <div class="specimen" id="specimen" title="Nettverket du spiller mot">
+      <span id="spes-navn">—</span> ·
+      <b id="spes-nevroner">—</b> nevroner ·
+      <b id="spes-forbindelser">—</b> koblinger<span id="spes-oye" hidden> · <b id="spes-oye-n">—</b> fotoreseptorer</span> ·
+      motor <b id="spes-motor">—</b>
+    </div>
+
+    <div class="spacer"></div>
+
+    <nav class="topbar-handlinger" aria-label="Hovedmeny">
+      <button class="btn btn-ghost" id="btn-toppliste" type="button">Toppliste</button>
+      <button class="btn btn-ghost" id="btn-vennelag" type="button">Vennelag</button>
+      <button class="btn btn-ghost" id="btn-slik" type="button">Slik fungerer det</button>
+      <button class="btn btn-ghost" id="btn-innstillinger" type="button" aria-label="Innstillinger">Innstillinger</button>
+      <button class="btn btn-ghost" id="btn-om" type="button" aria-label="Om spillet">Om</button>
+    </nav>
+  </header>
+
+  <!-- ============================ forside ============================ -->
+  <section class="screen" id="skjerm-start">
+    <div class="hero">
+      <div class="hero-flue" id="hero-flue" aria-hidden="true"></div>
+      <p class="eyebrow">Fruktflue · hele hjernen · 134 209 nevroner</p>
+      <h1>Sjakk mot en <em>flue</em></h1>
+      <p class="lede" id="lede">
+        Motstanderen din er ikke en sjakkmotor. Det er et nevralt nettverk koblet nøyaktig slik
+        hjernen til en fruktflue er koblet: <b id="lede-nevroner">134 209</b> nevroner og
+        <b id="lede-koblinger">2,7 millioner</b> koblinger, hentet fra
+        <a href="https://flywire.ai" rel="noopener">FlyWire</a>-rekonstruksjonen av en ekte fluehjerne.
+        Bare styrken på koblingene er trent opp. Ingenting annet velger trekkene.
+      </p>
+      <p class="lede" id="lede-oye" hidden></p>
+      <ul class="fakta">
+        <li>hver kobling finnes i den ekte flua</li>
+        <li>signene kommer fra ekte signalsubstanser</li>
+        <li>kjører lokalt — ingen konto, ingen sky</li>
+        <li id="fakta-oye" hidden>den ser brettet gjennom fasettøynene sine</li>
+      </ul>
+    </div>
+
+    <!-- tilstand A: modellen mangler -->
+    <div class="valg" id="panel-nedlasting" hidden>
+      <div class="lastefeil" style="max-width:620px" id="nedlasting-boks">
+        <h2 style="margin-bottom:.4em">Velkommen til Fluesjakk</h2>
+        <p class="dim" id="nedlasting-forklaring">
+          Spillet trenger én modellfil før du kan begynne. Filen inneholder fluehjernen og Lastes ned én gang.
+        </p>
+        <div class="oppsett-start" style="margin-top:18px">
+          <div class="fremdrift" id="nedlasting-fremdrift" hidden>
+            <div class="bar"><div class="bar-fill" id="nedlasting-fyll"></div></div>
+            <div class="fremdrift-meta">
+              <span id="nedlasting-tekst">Kobler til …</span>
+              <span id="nedlasting-prosent">0 %</span>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-big" id="btn-nedlasting" type="button">Last ned modellen</button>
+          <p class="mono muted" id="nedlasting-lisens" style="max-width:52ch;text-align:center;font-size:.7rem"></p>
+        </div>
+        <div class="lastefeil" id="nedlasting-feil" hidden style="margin-top:16px"></div>
+      </div>
+    </div>
+
+    <!-- tilstand B: modellen er klar -->
+    <div class="valg" id="panel-oppsett" hidden>
+      <h2 class="valg-tittel">Hvordan skal flua spille?</h2>
+      <div class="kort-rad" id="vanskelighetskort" role="radiogroup" aria-label="Vanskelighetsgrad"></div>
+
+      <div class="oppsett-rad">
+        <div class="field">
+          <span class="field-label">Du spiller</span>
+          <div class="seg" role="radiogroup" aria-label="Din farge">
+            <label><input type="radio" name="farge" value="white" checked><span>Hvit</span></label>
+            <label><input type="radio" name="farge" value="black"><span>Svart</span></label>
+            <label><input type="radio" name="farge" value="random"><span>Tilfeldig</span></label>
+          </div>
+        </div>
+        <label class="field">
+          <span class="field-label">Navnet ditt <span class="muted">(til topplisten)</span></span>
+          <input class="input" id="spiller-navn" type="text" maxlength="24" placeholder="Spiller" autocomplete="nickname">
+        </label>
+      </div>
+
+      <div class="oppsett-start">
+        <button class="btn btn-primary btn-big" id="btn-start" type="button" disabled>Vokser fluehjernen …</button>
+        <div class="fremdrift" id="lasting">
+          <div class="bar"><div class="bar-fill" id="last-fyll"></div></div>
+          <div class="fremdrift-meta">
+            <span id="last-tekst">Kobler til …</span>
+            <span id="last-nevroner"><b>0</b> nevroner</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lastefeil" id="lastefeil" hidden style="margin-top:20px"></div>
+    </div>
+  </section>
+
+  <!-- ============================ partiet ============================ -->
+  <main class="screen" id="skjerm-parti" hidden>
+    <div class="game">
+
+      <section class="board-col">
+        <div class="board-head">
+          <div class="spiller" id="spiller-topp" data-side="b"><span class="prikk"></span><span class="navn"></span></div>
+          <div class="tur-merke" id="tur-merke"></div>
+        </div>
+
+        <div class="board-frame"><div id="brett"></div></div>
+
+        <div class="board-foot">
+          <div class="spiller" id="spiller-bunn" data-side="w"><span class="prikk"></span><span class="navn"></span></div>
+          <div class="status" id="status" aria-live="polite">Din tur</div>
+          <button class="btn btn-small" id="btn-prov" type="button" hidden>Prøv igjen</button>
+        </div>
+      </section>
+
+      <aside class="side">
+        <div class="panel">
+          <div class="flue-topp">
+            <div class="flue-avatar" id="flue-avatar" data-humor="nysgjerrig"></div>
+            <div class="flue-navn">
+              <span class="navn" id="flue-navn">Flua</span>
+              <span class="humor" id="flue-humor">nysgjerrig</span>
+            </div>
+          </div>
+          <p class="kommentar" id="kommentar">Flua følger med på brettet.</p>
+          <div class="verdi" title="Verdihodet: hvor godt flua tror den står">
+            <div class="verdi-topp"><span>panikk</span><span>selvgod</span></div>
+            <div class="verdi-spor">
+              <div class="verdi-null"></div>
+              <div class="verdi-prikk" id="verdi-prikk"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel trekk-panel">
+          <div class="viz-topp"><span>Trekkliste</span><span id="trekk-antall"></span></div>
+          <ol class="trekk-liste" id="trekk-liste" aria-label="Trekkliste"></ol>
+          <div class="klokke">
+            <span>Siste<br><b id="kl-siste">—</b></span>
+            <span>Totalt<br><b id="kl-total">0,0 s</b></span>
+            <span>Søk<br><b id="kl-sok">—</b></span>
+          </div>
+          <div class="handlinger">
+            <button class="btn" id="btn-angre" type="button">Angre</button>
+            <button class="btn" id="btn-snu" type="button">Snu</button>
+            <button class="btn" id="btn-pgn" type="button">Kopier PGN</button>
+            <button class="btn btn-danger" id="btn-gi-opp" type="button">Gi opp</button>
+            <button class="btn btn-primary bred" id="btn-nytt" type="button">Nytt parti</button>
+          </div>
+        </div>
+
+        <div class="panel" id="teknisk-panel" hidden>
+          <div class="viz-topp"><span>Teknisk</span><span id="teknisk-motor">—</span></div>
+          <dl class="teknisk-rutenett" id="teknisk-rutenett"></dl>
+        </div>
+      </aside>
+
+      <section class="strip" id="strip">
+        <div class="panel viz-panel">
+          <div class="viz-topp">
+            <span id="hjerne-tittel">Nevronaktivitet</span>
+            <span id="hjerne-under">2 048 utvalgte nevroner</span>
+          </div>
+          <div class="brainviz">
+            <canvas id="brain-canvas" aria-label="Levende nevronaktivitet i fluehjernen"></canvas>
+            <canvas class="strip-canvas" id="strip-canvas" aria-label="Gjennomsnittlig aktivitet per nevronklasse gjennom tidsstegene" hidden></canvas>
+          </div>
+          <div class="replay" id="replay" hidden>
+            <button class="replay-btn" id="replay-play" type="button" aria-label="Spill av fluas tanke">▶</button>
+            <input class="replay-scrub" id="replay-scrub" type="range" min="0" max="15" step="0.01" value="15" aria-label="Tidssteg">
+            <span class="replay-steg" id="replay-steg">steg 16 / 16</span>
+            <button class="btn btn-small" id="replay-se" type="button" title="Be nettverket se på stillingen en gang til">Se igjen</button>
+          </div>
+          <div class="legend" id="legend"></div>
+        </div>
+
+        <div class="panel oye-panel" id="oye-panel">
+          <div class="viz-topp">
+            <span>Fluas øyne</span>
+            <span class="oye-modus" role="group" aria-label="Øyevising">
+              <button type="button" data-oye="ser" aria-pressed="true" title="hver fotoreseptor farges etter ruten den ser på">ser</button>
+              <button type="button" data-oye="foler" aria-pressed="false" title="hver fotoreseptor farges etter inngangsstrømmen den faktisk får">føler</button>
+            </span>
+          </div>
+          <div class="oye-visning">
+            <canvas id="oye-canvas" aria-label="Fluas to fasettøyne, hver fotoreseptor farget etter ruten den ser på"></canvas>
+            <div class="oye-tip mono" hidden></div>
+          </div>
+          <p class="oye-tekst" id="oye-tekst"></p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ============================ slik fungerer det ============================ -->
+  <section class="screen" id="skjerm-slik" hidden>
+    <div id="slik-innhold"></div>
+  </section>
+
+  <!-- ============================ bunntekst ============================ -->
+  <footer class="sidefot">
+    <p>
+      Fluesjakk av <b>Oliver Lysø Hellevik</b>. Connectomet er
+      <a href="https://flywire.ai" rel="noopener">FlyWire</a> —
+      Dorkenwald et al. 2024 og Schlegel et al. 2024 (<i>Nature</i>), CC BY-NC 4.0.
+      Sjakkregler av <a href="https://github.com/jhlywa/chess.js" rel="noopener">chess.js</a> (BSD-2).
+    </p>
+    <p><a href="#" id="lenke-om">Om spillet og lisenser</a></p>
+  </footer>
+</div>
+
+<!-- ============================ resultat ============================ -->
+<dialog id="resultat-dialog">
+  <form method="dialog" class="dialog-body">
+    <p class="eyebrow" id="resultat-eyebrow">Partiet er ferdig</p>
+    <h2 id="resultat-tittel">Du slo flua</h2>
+    <p class="dim" id="resultat-under"></p>
+    <canvas class="delt-bilde" id="del-canvas" width="1200" height="630" aria-label="Delebilde fra partiet"></canvas>
+    <div class="dialog-rad">
+      <button class="btn" type="button" id="btn-kopier-bilde">Kopier bilde</button>
+      <button class="btn" type="button" id="btn-last-ned-bilde">Lagre bilde</button>
+      <button class="btn" type="button" id="btn-kopier-tekst">Kopier tekst</button>
+      <span class="mono muted" id="del-hint"></span>
+    </div>
+    <div class="dialog-rad">
+      <button class="btn btn-primary" type="button" id="btn-omkamp">Spill igjen</button>
+      <button class="btn" type="button" id="btn-neste-spiller" hidden>Neste spiller</button>
+      <button class="btn btn-ghost" type="submit">Lukk</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ============================ vennelag ============================ -->
+<dialog id="vennelag-dialog">
+  <form method="dialog" class="dialog-body">
+    <p class="eyebrow">Pass og spill</p>
+    <h2>Vennelag</h2>
+    <p class="dim">Alle spiller mot samme flue. Den som slår flua på færrest trekk vinner kvelden; ved likt antall trekk vinner den raskeste.</p>
+    <label class="field" style="margin-top:14px"><span class="field-label">Spillere, én per linje</span>
+      <textarea class="input" id="vennelag-navn" rows="5" placeholder="Ola&#10;Kari&#10;Even"></textarea>
+    </label>
+    <div class="oppsett-rad" style="justify-content:flex-start">
+      <label class="field"><span class="field-label">Vanskelighetsgrad for alle</span>
+        <select class="input" id="vennelag-vanskelighet">
+          <option value="larve">Larve</option>
+          <option value="flue" selected>Flue</option>
+          <option value="superflue">Superflue</option>
+        </select>
+      </label>
+      <label class="field"><span class="field-label">Farge</span>
+        <select class="input" id="vennelag-farge">
+          <option value="white">Alle spiller hvit</option>
+          <option value="black">Alle spiller svart</option>
+          <option value="random">Tilfeldig</option>
+        </select>
+      </label>
+    </div>
+    <div class="dialog-rad">
+      <button class="btn btn-primary" type="button" id="btn-vennelag-start">Start turneringen</button>
+      <button class="btn btn-ghost" type="submit">Avbryt</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ============================ toppliste ============================ -->
+<dialog id="toppliste-dialog">
+  <form method="dialog" class="dialog-body">
+    <p class="eyebrow">Lagret i denne nettleseren</p>
+    <h2>Toppliste</h2>
+    <div class="tabell-wrap"><table id="toppliste-tabell"></table></div>
+    <div class="dialog-rad">
+      <button class="btn btn-ghost" type="button" id="btn-tom-liste">Tøm listen</button>
+      <button class="btn" type="submit">Lukk</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ============================ innstillinger ============================ -->
+<dialog id="innstillinger-dialog">
+  <form method="dialog" class="dialog-body prose">
+    <p class="eyebrow">Tilpass spillet</p>
+    <h2>Innstillinger</h2>
+
+    <h3>Spill</h3>
+    <div class="innstillinger-liste" id="innstillinger-liste"></div>
+
+    <h3>Brett</h3>
+    <label class="field" style="max-width:260px">
+      <span class="field-label">Bretttema</span>
+      <select class="input" id="sett-tema">
+        <option value="kveld">Kveld</option>
+        <option value="skifer">Skifer</option>
+        <option value="skog">Skog</option>
+      </select>
+    </label>
+
+    <div class="dialog-rad">
+      <button class="btn btn-ghost" type="button" id="btn-nullstill">Nullstill</button>
+      <button class="btn btn-primary" type="submit">Ferdig</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ============================ om ============================ -->
+<dialog id="om-dialog">
+  <form method="dialog" class="dialog-body prose">
+    <p class="eyebrow">Om spillet</p>
+    <h2>Fluesjakk</h2>
+    <p>Fluesjakk er en videreutviklet, norsk versjon av sjakk-mot-en-fluehjerne. Spillet, grensesnittet
+       og den visuelle identiteten er laget av <b>Oliver Lysø Hellevik</b>.</p>
+
+    <h3>Utvikler</h3>
+    <p><b>Oliver Lysø Hellevik</b> — konsept, grensesnitt, norsk språk, design og distribusjon av denne versjonen.</p>
+
+    <h3>Teknisk grunnlag</h3>
+    <p id="om-grunnlag"></p>
+
+    <h3>Personvern</h3>
+    <p id="om-personvern"></p>
+
+    <h3>Systemkrav</h3>
+    <p id="om-krav"></p>
+
+    <h3>Tastatursnarveier</h3>
+    <dl class="teknisk-rutenett" id="om-snarveier"></dl>
+
+    <h3>Lisens</h3>
+    <p id="om-lisens"></p>
+
+    <div class="dialog-rad">
+      <button class="btn" type="button" id="btn-feilsoking">Feilsøking</button>
+      <button class="btn btn-primary" type="submit">Lukk</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ============================ feilsøking ============================ -->
+<dialog id="feilsok-dialog">
+  <form method="dialog" class="dialog-body prose">
+    <p class="eyebrow">Når noe ikke virker</p>
+    <h2>Feilsøking</h2>
+    <div id="feilsok-innhold"></div>
+    <div class="dialog-rad">
+      <button class="btn" type="button" id="btn-kopier-logg">Kopier teknisk logg</button>
+      <button class="btn btn-primary" type="submit">Lukk</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="varsel" id="varsel" role="status" aria-live="polite" hidden></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

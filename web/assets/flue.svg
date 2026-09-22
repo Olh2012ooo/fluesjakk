@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="flue" aria-hidden="true">
+  <g class="flue-vinger">
+    <path d="M100 120 C62 90 28 94 20 118 C13 139 44 156 100 152 Z"/>
+    <path d="M100 120 C138 90 172 94 180 118 C187 139 156 156 100 152 Z"/>
+  </g>
+  <g class="flue-kropp">
+    <ellipse class="flue-bakkropp" cx="100" cy="163" rx="25" ry="29"/>
+    <circle class="flue-bryst" cx="100" cy="113" r="30"/>
+    <circle class="flue-hode" cx="100" cy="66" r="43"/>
+    <g class="flue-oyne">
+      <ellipse cx="75" cy="57" rx="20" ry="25"/>
+      <ellipse cx="125" cy="57" rx="20" ry="25"/>
+      <ellipse class="flue-glans" cx="68" cy="46" rx="6" ry="8"/>
+      <ellipse class="flue-glans" cx="118" cy="46" rx="6" ry="8"/>
+    </g>
+    <g class="flue-antemer" fill="none">
+      <path d="M85 27 C77 12 66 7 56 10"/>
+      <path d="M115 27 C123 12 134 7 144 10"/>
+      <circle cx="56" cy="10" r="3.5"/>
+      <circle cx="144" cy="10" r="3.5"/>
+    </g>
+    <path class="mouth" d="M87 93 Q100 101 113 93" fill="none"/>
+  </g>
+</svg>
