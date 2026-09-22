@@ -92,7 +92,10 @@ Denne oversikten finnes fordi det skal være mulig å se nøyaktig hva som er hv
 - Eksporten til nettleserformatet og referanseimplementasjonen i numpy: `flychess/export/`
 - Nettlesermotoren, Web Worker-protokollen og tverrspråkstesten: `web/engine/`
 - Eksporttjenesten og den lokale tjeneren: `flychess/play/local_web.py`
-- Spesifikasjonen: `docs/SPEC.md`
+- Spesifikasjonen: `docs/SPEC.md`, med `docs/DATA.md`, `docs/RETINA.md` og lisensfilen for CC BY-NC
+- Skjermbildene `docs/dashboard.png`, `docs/dashboard-mobile.png` og `docs/retina-map.png` viser
+  det arvede Python-dashboardet og retina-kartleggingen, og er hentet fra originalprosjektet.
+  Skjermbildene i `docs/skjermbilder/` er av Fluesjakk og tatt her.
 
 ### Nytt i Fluesjakk (Oliver Lysø Hellevik)
 

@@ -18,6 +18,10 @@ egen datamaskin.
 [fly-chess](https://github.com/cesp99/fly-chess). Hva som er arvet og hva som er nytt står i
 [CREDITS.md](CREDITS.md).
 
+![Forsiden til Fluesjakk](docs/skjermbilder/forside.png)
+
+![Et parti underveis, med nevronaktiviteten og fluas øyne under brettet](docs/skjermbilder/parti.png)
+
 ---
 
 ## Innhold
