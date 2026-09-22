@@ -1,0 +1,66 @@
+{
+  "name": "fluesjakk",
+  "productName": "Fluesjakk",
+  "version": "1.0.0",
+  "description": "Sjakk mot en fluehjerne — Fluesjakk av Oliver Lysø Hellevik",
+  "author": {
+    "name": "Oliver Lysø Hellevik"
+  },
+  "license": "MIT",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64",
+    "build:zip": "electron-builder --win zip --x64",
+    "build:portable": "electron-builder --win portable --x64"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "no.hellevik.fluesjakk",
+    "productName": "Fluesjakk",
+    "copyright": "© 2026 Oliver Lysø Hellevik. Connectomet: FlyWire-konsortiet, CC BY-NC 4.0.",
+    "directories": {
+      "output": "../dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../web",
+        "to": "web",
+        "filter": [
+          "**/*",
+          "!test/**"
+        ]
+      }
+    ],
+    "win": {
+      "icon": "build/icon.png",
+      "target": [
+        "nsis",
+        "zip"
+      ],
+      "artifactName": "Fluesjakk-${version}-Windows-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "Fluesjakk",
+      "artifactName": "Fluesjakk-${version}-Setup.${ext}"
+    },
+    "portable": {
+      "artifactName": "Fluesjakk-${version}-portable.${ext}"
+    }
+  },
+  "allowScripts": {
+    "electron@33.4.11": true
+  }
+}
