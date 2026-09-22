@@ -109,6 +109,13 @@ Denne oversikten finnes fordi det skal være mulig å se nøyaktig hva som er hv
 - Skrivebordsappen for Windows: `desktop/`
 - GitHub Actions for tester, paritet og utgivelser
 
+### Tatt ut av den arvede koden
+
+`scripts/deploy-pages.sh`, `scripts/publish-hf.py` og `tests/test_deploy_pages.py` følger ikke med.
+Det var originalforfatterens egne publiseringsverktøy: de committer under hans identitet og laster
+opp til hans kontoer på GitHub og Hugging Face. De ville vært misvisende i en distribusjon under en
+annen utvikler, og Fluesjakk publiseres som Windows-utgave via GitHub Releases i stedet.
+
 ### Endret i den arvede koden
 
 Få og små endringer, alle for å gjøre tverspråkstesten kjørbar uten GPU og for å gjøre

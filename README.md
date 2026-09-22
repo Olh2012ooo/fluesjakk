@@ -188,7 +188,7 @@ sentralhjernen får høre om det. Panelet **Fluas øyne** viser dette direkte.
 ## Slik spiller du
 
 1. **Last ned spillet.** Windows: `Fluesjakk-x.y.z-Setup.exe` fra
-   [Releases](https://github.com/oliverhellevik/fluesjakk/releases). Vil du ikke installere, kan du
+   [Releases](https://github.com/Olh2012ooo/fluesjakk/releases). Vil du ikke installere, kan du
    bruke zip-utgaven og pakke den ut hvor du vil.
 2. **Åpne det.** Dobbeltklikk på `Fluesjakk.exe`. Ingen terminal, ingen Python, ingen Node.
 3. **Første gang:** hvis modellen ikke allerede følger med, spør spillet om å laste den ned
@@ -353,7 +353,7 @@ sekunder per trekk uten skjermkort. Med WebGPU går det rundt 25 ganger raskere.
 
 ### For deg som bare vil spille
 
-1. Gå til [Releases](https://github.com/oliverhellevik/fluesjakk/releases).
+1. Gå til [Releases](https://github.com/Olh2012ooo/fluesjakk/releases).
 2. Last ned `Fluesjakk-x.y.z-Setup.exe`.
 3. Kjør den og følg veiviseren.
 4. Åpne **Fluesjakk** fra startmenyen.
@@ -366,7 +366,7 @@ Vil du ikke installere noe, kan du laste ned zip-utgaven i stedet og pakke den u
 ### For deg som vil spille i nettleseren
 
 ```bash
-git clone https://github.com/oliverhellevik/fluesjakk && cd fluesjakk
+git clone https://github.com/Olh2012ooo/fluesjakk && cd fluesjakk
 python -m http.server 8000 --directory web
 # åpne http://localhost:8000
 ```
@@ -381,7 +381,7 @@ Spillet laster ned modellen selv ved første besøk.
 ## Utvikling
 
 ```bash
-git clone https://github.com/oliverhellevik/fluesjakk && cd fluesjakk
+git clone https://github.com/Olh2012ooo/fluesjakk && cd fluesjakk
 uv sync                       # eller: pip install -e . && pip install --group dev
 source .venv/bin/activate
 ```

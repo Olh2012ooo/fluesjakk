@@ -46,7 +46,7 @@ spesifikasjonen i samme draforespørsel.
 ## Sette opp
 
 ```bash
-git clone https://github.com/oliverhellevik/fluesjakk && cd fluesjakk
+git clone https://github.com/Olh2012ooo/fluesjakk && cd fluesjakk
 uv sync                     # eller: pip install -e . && pip install --group dev
 source .venv/bin/activate
 

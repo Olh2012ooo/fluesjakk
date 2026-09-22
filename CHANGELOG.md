@@ -57,6 +57,18 @@ språk og egen skrivebordsapp.
   innstillinger, teknisk modus, nedlastingsflyten og at grensesnittet er norsk.
 - Lisensen beholder opphavsretten til den arvede koden, som MIT krever.
 
+### Fjernet
+
+- `scripts/deploy-pages.sh`, `scripts/publish-hf.py` og `tests/test_deploy_pages.py` er tatt ut.
+  Dette var originalforfatterens egne publiseringsverktøy: de committer under hans identitet
+  (`Carlo Esposito <…@users.noreply.github.com>`) og laster opp til hans kontoer på GitHub og
+  Hugging Face. De hører ikke hjemme i en distribusjon under en annen utvikler, og Fluesjakk
+  distribueres uansett som Windows-utgave via GitHub Releases
+  (`.github/workflows/release.yml`), ikke via GitHub Pages.
+
+- Skjermbildene `docs/website*.png` er fjernet. De viste det opprinnelige nettgrensesnittet, som
+  ikke finnes i denne versjonen. Nye skjermbilder ligger i `docs/skjermbilder/`.
+
 ### Rettet
 
 - **Vanskelighetsgradene virket ikke.** Grensesnittet sendte `larve`/`flue`/`superflue` til
