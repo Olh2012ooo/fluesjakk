@@ -274,12 +274,13 @@ def cmd_test_vectors(args: argparse.Namespace) -> int:
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="fly",
-        description="fly-chess: train and play a chess engine whose network is the FlyWire fruit-fly connectome.",
+        description="Fluesjakk: train and play a chess engine whose network is the FlyWire fruit-fly "
+                    "connectome. (Norwegian fork of fly-chess by Oliver Lysø Hellevik; see CREDITS.md.)",
         epilog="Typical pipeline: fly download -> fly build-brain -> fly build-shards -> fly train --run fly1 "
                "-> fly dashboard --run fly1 -> fly play --run fly1 -> fly export-web --run fly1. "
                "Add --tiny to build-brain / train for a 2000-neuron smoke run.",
     )
-    p.add_argument("--version", action="version", version=f"fly-chess {__version__}")
+    p.add_argument("--version", action="version", version=f"Fluesjakk {__version__}")
     p.add_argument("-v", "--verbose", action="store_true", help="debug-level log output")
     sub = p.add_subparsers(dest="command", metavar="command")
     sub.required = True

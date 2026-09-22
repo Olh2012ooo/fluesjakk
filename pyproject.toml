@@ -1,13 +1,16 @@
 [project]
 name = "flychess"
-version = "0.1.0"
-description = "A chess-playing neural network wired exactly like a fruit fly brain (FlyWire connectome)."
+version = "1.0.0"
+description = "Fluesjakk: sjakk mot et nevralt nettverk koblet som hjernen til en fruktflue (FlyWire-connectomet)."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
-authors = [{ name = "Carlo Esposito", email = "carlo@aploi.de" }]
+authors = [{ name = "Oliver Lysø Hellevik" }]
+# Motoren og treningskoden er arvet fra fly-chess av Carlo Esposito (MIT).
+# Se CREDITS.md for hva som er arvet og hva som er nytt.
+maintainers = [{ name = "Oliver Lysø Hellevik" }]
 dependencies = [
-  "torch>=2.7",  # CUDA 12.8+ wheels: needed for Blackwell (sm_120) GPUs
+  "torch>=2.7",  # CUDA 12.8+ hjul: trengs for Blackwell (sm_120)-kort
   "numpy>=2.0",
   "scipy>=1.14",
   "pandas>=2.2",
@@ -25,8 +28,10 @@ dependencies = [
 
 [project.scripts]
 fly = "flychess.cli:main"
+fluesjakk = "flychess.cli:main"   # samme verktøy under prosjektets eget navn
 
-# PEP 735 dependency group: `uv sync` installs it by default; with pip use `pip install --group dev` (pip >= 25.1).
+# PEP 735-avhengighetsgruppe: `uv sync` installerer den som standard; med pip bruker du
+# `pip install --group dev` (pip >= 25.1).
 [dependency-groups]
 dev = ["pytest>=8", "pytest-timeout>=2.3", "ruff>=0.6", "httpx>=0.27"]
 
@@ -40,7 +45,7 @@ packages = ["flychess"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 timeout = 600
-markers = ["slow: needs real data or GPU; run with -m slow"]
+markers = ["slow: trenger ekte data eller GPU; kjør med -m slow"]
 
 [tool.ruff]
 line-length = 110
