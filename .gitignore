@@ -1,0 +1,23 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# treningsdata og kjøringer — lastes ned eller bygges lokalt, hører ikke i kodelageret
+/data/
+runs/
+
+# modellfilene: avledet av FlyWire-dataene, CC BY-NC 4.0, lastes ned av spillet selv.
+# Se CREDITS.md og README.md → Modell.
+web/model/
+tests/vectors/model.json
+
+# skrivebordsappens bygg (ikonet i desktop/build/ er kilde og skal med i repoet)
+node_modules/
+dist/
+
+*.log
+.DS_Store
+Thumbs.db
