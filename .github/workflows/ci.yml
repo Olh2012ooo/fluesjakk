@@ -1,0 +1,109 @@
+name: Tester
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ------------------------------------------------------------------ motoren
+  python:
+    name: Python — motor, trening, eksport
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Installer (CPU-bygg av torch holder i CI)
+        run: |
+          uv venv --python 3.12
+          uv pip install torch --index-url https://download.pytorch.org/whl/cpu
+          uv pip install numpy scipy pandas pyarrow "chess>=1.11" zstandard \
+            "fastapi>=0.115" "uvicorn[standard]>=0.30" "websockets>=13" requests tqdm pyyaml rich \
+            "pytest>=8" "pytest-timeout>=2.3" "ruff>=0.6" "httpx>=0.27"
+          uv pip install -e . --no-deps
+
+      - name: Stil
+        run: .venv/bin/ruff check flychess tests
+
+      - name: Tester
+        run: .venv/bin/python -m pytest -q
+
+  # ------------------------------------------------------------------ motoren i nettleseren
+  web:
+    name: Nettleser — motor og grensesnitt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Uten web/model/ hopper paritetstesten over med en melding; resten kjører.
+      - name: Tester
+        run: node --test web/test/*.mjs
+
+      - name: Syntakssjekk på alle skript
+        run: for f in web/*.js web/engine/*.js; do node --check "$f"; done
+
+  # ------------------------------------------------------------------ paritet mot den ekte modellen
+  # Denne jobben er den viktigste: den laster den virkelige modellen, regner ut fasiten i Python og
+  # krever at nettlesermotoren gir nøyaktig de samme tallene (SPEC §8).
+  paritet:
+    name: Paritet — Python mot nettleser
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Mellomlagre modellen
+        id: modell-cache
+        uses: actions/cache@v4
+        with:
+          path: web/model
+          key: flywire-fly3-brain-v1
+
+      - name: Installer
+        run: pip install "numpy>=2.0" "chess>=1.11"
+
+      - name: Hent modellen
+        run: python scripts/hent_modell.py
+
+      - name: Regn ut fasiten fra den eksporterte modellen
+        run: |
+          python - <<'PY'
+          from flychess.export.testvectors import write_model_vectors
+          write_model_vectors(model_dir="web/model")
+          PY
+
+      - name: Paritet
+        run: node --test web/test/parity.test.mjs
+
+      - name: Grensesnittet mot den ekte modellen i en ekte nettleser
+        run: node --test web/test/app.test.mjs
+        env:
+          CHROME: /usr/bin/google-chrome
+
+      - name: Last opp avviksrapport ved feil
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: paritet-feil
+          path: tests/vectors/model.json
+          if-no-files-found: ignore

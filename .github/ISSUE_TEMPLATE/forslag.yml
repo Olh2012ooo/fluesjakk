@@ -1,0 +1,54 @@
+name: Foreslå en forbedring
+description: En idé til noe som kan bli bedre
+title: "[Forslag] "
+labels: ["forslag"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Tak for at du vil gjøre Fluesjakk bedre. Beskriv gjerne problemet du vil løse, ikke bare
+        løsningen du ser for deg — det hender det finnes en enklere vei til samme mål.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Hva er problemet?
+      description: Hva er det som er vanskelig, irriterende eller mangler i dag?
+    validations:
+      required: true
+
+  - type: textarea
+    id: forslag
+    attributes:
+      label: Hva ser du for deg?
+      description: Hvordan ville du løst det? Skisser eller skjermbilder er hjertelig velkomne.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: omrade
+    attributes:
+      label: Hvilket område gjelder det?
+      options:
+        - Grensesnitt og utseende
+        - Selve spillet (brettet, reglene, trekkene)
+        - Flua (vanskelighetsgrader, hvor sterk den er)
+        - Visualiseringen (nevroner, øyne, tankegjenspillingen)
+        - Installasjon og distribusjon
+        - Dokumentasjon
+        - Annet
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: ansvar
+    attributes:
+      label: Før du sender inn
+      options:
+        - label: Jeg har søkt i de eksisterende sakene og fant ikke det samme forslaget.
+          required: true
+        - label: |
+            Jeg forstår at forslag som gjør modellen eller grensesnittet tregere eller mer uklart
+            sjelden blir tatt inn, siden prosjektet prioriterer funksjonalitet og stabilitet foran
+            nye funksjoner.
+          required: false

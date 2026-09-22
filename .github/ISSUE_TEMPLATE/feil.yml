@@ -1,0 +1,77 @@
+name: Meld en feil
+description: Noe virker ikke som det skal
+title: "[Feil] "
+labels: ["feil"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Tak for at du tar deg tid. Jo mer konkret beskrivelsen er, jo raskere går det å finne ut
+        hva som er galt.
+
+        Er dette et **sikkerhetsproblem**, bruk ikke dette skjemaet — se
+        [SECURITY.md](https://github.com/oliverhellevik/fluesjakk/blob/main/SECURITY.md).
+
+  - type: textarea
+    id: hva
+    attributes:
+      label: Hva skjedde?
+      description: Beskriv hva du gjorde, hva du forventet, og hva som faktisk skjedde.
+      placeholder: |
+        Jeg spilte som svart på superflue og trykket «Gi opp» midt i fluas trekk.
+        Jeg forventet at partiet ble avsluttet, men brettet ble stående låst.
+    validations:
+      required: true
+
+  - type: textarea
+    id: gjenskap
+    attributes:
+      label: Hvordan kan det gjenskapes?
+      description: Steg for steg, hvis du klarer å få det til flere ganger.
+      placeholder: |
+        1. Start spillet
+        2. Velg Superflue og svart
+        3. Spill e4 og trykk «Gi opp» mens flua tenker
+        4. Brettet blir stående
+    validations:
+      required: false
+
+  - type: dropdown
+    id: hvor
+    attributes:
+      label: Hvor skjedde det?
+      options:
+        - Windows-appen (Fluesjakk.exe)
+        - Nettleseren
+        - Begge
+    validations:
+      required: true
+
+  - type: input
+    id: versjon
+    attributes:
+      label: Hvilken versjon av Fluesjakk?
+      description: Står i vinduets tittel, eller under Om → Om spillet.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: system
+    attributes:
+      label: Operativsystem og nettleser
+      placeholder: "Windows 11, Chrome 140"
+    validations:
+      required: false
+
+  - type: textarea
+    id: logg
+    attributes:
+      label: Teknisk logg
+      description: |
+        Åpne spillet, gå til **Om** → **Feilsøking** → **Kopier teknisk logg**, og lim inn her.
+        Loggen inneholder nettleserversjon, modellinformasjon og de siste hendelsene — ingen
+        personlige opplysninger.
+      render: text
+    validations:
+      required: false

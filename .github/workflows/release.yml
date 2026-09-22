@@ -1,0 +1,116 @@
+name: Utgivelse
+
+# Bygger Windows-utgaven og legger den ut som en GitHub-utgivelse.
+# Kjør med en tag:  git tag v1.0.0 && git push origin v1.0.0
+# Eller manuelt fra Actions-fanen (da lages bare artefaktene, ingen utgivelse).
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    name: Windows-utgave
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # ------------------------------------------------------------------ kvalitetsport
+      # Ingenting bygges før testene er grønne. En utgivelse som ikke er testet er ikke en utgivelse.
+      - name: Installer testavhengigheter
+        run: pip install "numpy>=2.0" "chess>=1.11"
+
+      - name: Hent modellen
+        run: python scripts/hent_modell.py
+
+      - name: Regn ut fasiten fra modellen
+        run: |
+          python -c "from flychess.export.testvectors import write_model_vectors; write_model_vectors(model_dir='web/model')"
+
+      - name: Paritet mellom Python og nettleseren
+        run: node --test web/test/parity.test.mjs
+
+      - name: Nettlesertestene
+        run: node --test web/test/*.mjs
+
+      # ------------------------------------------------------------------ bygg
+      - name: Installer byggeavhengigheter
+        working-directory: desktop
+        run: npm ci || npm install
+
+      - name: Bygg Fluesjakk.exe, installasjonsfil og zip
+        working-directory: desktop
+        run: npx electron-builder --win --x64
+
+      # ------------------------------------------------------------------ sjekksummer
+      - name: Lag sjekksummer
+        shell: pwsh
+        run: |
+          Get-ChildItem dist -File | Where-Object { $_.Extension -in '.exe', '.zip' } | ForEach-Object {
+            $h = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower()
+            "$h  $($_.Name)"
+          } | Set-Content dist/SHA256SUMS.txt
+          Get-Content dist/SHA256SUMS.txt
+
+      # ------------------------------------------------------------------ artefakter
+      - name: Last opp artefaktene
+        uses: actions/upload-artifact@v4
+        with:
+          name: Fluesjakk-Windows
+          path: |
+            dist/*.exe
+            dist/*.zip
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+
+      # ------------------------------------------------------------------ utgivelse
+      - name: Lag GitHub-utgivelse
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $summer = Get-Content dist/SHA256SUMS.txt -Raw
+          $notat = @"
+          ## Fluesjakk $tag
+
+          Sjakk mot et nevralt nettverk koblet som hjernen til en fruktflue:
+          134 209 nevroner og 2 700 513 koblinger fra FlyWire-connectomet.
+
+          ### Slik spiller du
+
+          1. Last ned ``Fluesjakk-*-Setup.exe``
+          2. Kjør den og følg veiviseren (Windows kan vise en SmartScreen-advarsel — velg
+             *Mer informasjon* → *Kjør likevel*; filen er ikke kodesignert)
+          3. Åpne **Fluesjakk** fra startmenyen og spill
+
+          Modellen følger med i pakken, så spillet virker uten internett fra første stund.
+          Vil du ikke installere, kan du laste ned zip-utgaven i stedet og pakke den ut hvor du vil.
+
+          ### Sjekksummer
+
+          ```
+          $summer
+          ```
+
+          ### Lisens
+
+          Koden er MIT. Modellvektene er avledet av FlyWire-connectomet og er CC BY-NC 4.0 —
+          ikke-kommersielt bruk med attribusjon. Se CREDITS.md.
+          "@
+          $notat | Out-File -FilePath NOTATER.md -Encoding utf8
+          gh release create $tag --title "Fluesjakk $tag" --notes-file NOTATER.md `
+            (Get-ChildItem dist/*.exe, dist/*.zip | ForEach-Object { $_.FullName })
