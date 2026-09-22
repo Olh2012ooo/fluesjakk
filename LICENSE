@@ -1,0 +1,70 @@
+MIT License
+
+Copyright (c) 2026 Oliver Lysø Hellevik
+
+Fluesjakk er en videreutviklet, norsk versjon av prosjektet «fly-chess». Grensesnittet, den norske
+oversettelsen, den visuelle identiteten, skrivebordsappen og distribusjonen er laget av Oliver Lysø
+Hellevik. Motoren og treningskoden er arvet fra originalprosjektet og står under opphavsretten
+nedenfor, som kreves av MIT-lisensen.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+================================================================================
+Opphavsrett og lisenser for arvet og tredjeparts materiale
+================================================================================
+
+1. ARVET KODE — MIT
+   Deler av kildekoden (særlig `flychess/` og den numeriske motoren i `web/engine/`) kommer fra
+   prosjektet fly-chess og brukes under MIT-lisensen:
+
+       MIT License
+       Copyright (c) 2026 Carlo Esposito
+
+   Denne koden er videreutviklet og tilpasset i Fluesjakk, men opphavsretten til grunnlaget
+   beholdes som lisensen krever.
+
+2. FLYWIRE-CONNECTOMET OG AVLEDEDE MODELLVEKTER — CC BY-NC 4.0
+   Connectomdataene er hentet fra FlyWire (Codex snapshot 783, https://codex.flywire.ai) og er
+   lisensiert under Creative Commons Attribution-NonCommercial 4.0 International.
+   Modellvektene som følger med spillet er avledet av disse dataene og står under samme lisens.
+
+   DETTE BETYR AT SPILLET OG ALT SOM BYGGER PÅ MODELLEN KAN BRUKES FRITT TIL
+   IKKE-KOMMERSIELLE FORMÅL, MED ATTRIBUSJON — MEN IKKE KAN SELGES ELLER BRUKES KOMMERSIELT.
+
+   Full lisens: docs/LICENSE-CC-BY-NC-4.0.txt
+   Sitering: se CREDITS.md
+
+   Modellvektene er ikke en del av dette kodelageret. De lastes ned separat av brukeren eller av
+   byggeprosessen, nettopp fordi de har en annen lisens enn koden.
+
+3. SJAKKREGLER
+   - `web/vendor/chess.js` — chess.js, BSD-2-Clause. Følger med i nettleser- og skrivebordsversjonen.
+   - `python-chess` (GPL-3.0-or-later) brukes av Python-siden til trekkgenereing. Python-pakken
+     importerer et GPL-bibliotek og distribueres derfor ikke som en del av Windows-utgaven.
+
+4. TRENINGSDATA
+   Lichess åpne database (https://database.lichess.org) — CC0 (offentlig eiendom).
+
+5. ANDRE BIBLIOTEKER
+   - PyTorch — BSD-3-Clause
+   - NumPy, SciPy, pandas, pyarrow — BSD-3-Clause
+   - FastAPI, Uvicorn, websockets — MIT / BSD
+   - Electron (skrivebordsappen) — MIT
+
+Se CREDITS.md for full attribusjon.
