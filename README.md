@@ -187,12 +187,13 @@ sentralhjernen får høre om det. Panelet **Fluas øyne** viser dette direkte.
 
 ## Slik spiller du
 
-1. **Last ned spillet.** Windows: `Fluesjakk-x.y.z-Setup.exe` fra
-   [Releases](https://github.com/Olh2012ooo/fluesjakk/releases). Vil du ikke installere, kan du
-   bruke zip-utgaven og pakke den ut hvor du vil.
+1. **Last ned spillet.** Windows: `Fluesjakk-1.0.0-Setup.exe` fra
+   [Releases](https://github.com/Olh2012ooo/fluesjakk/releases/latest). Vil du ikke installere, kan
+   du bruke zip-utgaven og pakke den ut hvor du vil.
 2. **Åpne det.** Dobbeltklikk på `Fluesjakk.exe`. Ingen terminal, ingen Python, ingen Node.
-3. **Første gang:** hvis modellen ikke allerede følger med, spør spillet om å laste den ned
-   (omtrent 50 MB). Det gjøres én gang. Deretter virker spillet uten internett.
+3. **Ingenting mer å hente.** Modellen følger med i den ferdige Windows-utgaven. Bygger du eller
+   kjører nettleserversjonen selv, spør spillet i stedet om å laste den ned én gang (omtrent 50 MB),
+   og virker deretter uten internett.
 4. **Velg side.** Hvit, svart eller tilfeldig.
 5. **Velg vanskelighetsgrad.** Larve, flue eller superflue.
 6. **Spill.** Dra brikkene med musa eller fingeren, eller bruk piltastene og Enter.
@@ -337,7 +338,8 @@ etter at modellen er lastet.
 ## Systemkrav
 
 **Windows:** Windows 10 eller nyere, 64-bit. Ingen installasjon av Python, Node eller andre
-utviklerverktøy. Omtrent 250 MB ledig plass.
+utviklerverktøy. Installert utgave bruker omtrent 400 MB, og installationsfilen er 168 MB
+(herav 50 MB modell). Zip-utgaven er 200 MB.
 
 **Nettleser:** en moderne nettleser med støtte for ES-moduler og Web Workers — Chrome, Edge, Firefox
 eller Safari i nyere versjon. Har nettleseren WebGPU, kjører nettverket på skjermkortet og flua
@@ -353,15 +355,25 @@ sekunder per trekk uten skjermkort. Med WebGPU går det rundt 25 ganger raskere.
 
 ### For deg som bare vil spille
 
-1. Gå til [Releases](https://github.com/Olh2012ooo/fluesjakk/releases).
-2. Last ned `Fluesjakk-x.y.z-Setup.exe`.
-3. Kjør den og følg veiviseren.
-4. Åpne **Fluesjakk** fra startmenyen.
+1. Gå til **[Releases](https://github.com/Olh2012ooo/fluesjakk/releases/latest)**.
+2. Last ned **`Fluesjakk-1.0.0-Setup.exe`**.
+3. Kjør filen og følg veiviseren.
+4. Åpne **Fluesjakk** fra startmenyen og spill.
 
-Installasjonsfilen er ikke kodesignert (det koster penger og prosjektet er gratis), så Windows kan
-vise en advarsel fra SmartScreen første gang. Velg **Mer informasjon** → **Kjør likevel**.
+Modellen følger med i pakken, så spillet virker med én gang og trenger ikke internett — verken
+første gang eller senere.
 
-Vil du ikke installere noe, kan du laste ned zip-utgaven i stedet og pakke den ut hvor du vil.
+Vil du ikke installere noe, laster du ned **`Fluesjakk-1.0.0-Windows-x64.zip`** i stedet og pakker
+den ut hvor du vil. Da starter du spillet med `Fluesjakk.exe` i mappen.
+
+> **Windows viser kanskje en SmartScreen-advarsel.** Programmet er ikke kodesignert — et
+> codesigning-sertifikat koster penger, og dette prosjektet er gratis. Velg **Mer informasjon** →
+> **Kjør likevel**. Vil du være sikker på at filen er ekte, kan du sammenligne sjekksummen med
+> `SHA256SUMS.txt` i samme utgivelse:
+>
+> ```powershell
+> Get-FileHash .\Fluesjakk-1.0.0-Setup.exe -Algorithm SHA256
+> ```
 
 ### For deg som vil spille i nettleseren
 
