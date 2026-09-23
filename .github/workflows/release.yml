@@ -83,34 +83,57 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $tag = "${{ github.ref_name }}"
-          $summer = Get-Content dist/SHA256SUMS.txt -Raw
-          $notat = @"
-          ## Fluesjakk $tag
+          $versjon = $tag -replace '^v', ''
+          $summer = (Get-Content dist/SHA256SUMS.txt -Raw).Trim()
+          # Enkeltsitert her-streng: PowerShell tolker backticks som escape-tegn i en
+          # dobbeltsitert, og da forsvinner kodeblokkene i notatene.
+          $mal = @'
+          ## Fluesjakk {VERSJON}
 
           Sjakk mot et nevralt nettverk koblet som hjernen til en fruktflue:
           134 209 nevroner og 2 700 513 koblinger fra FlyWire-connectomet.
 
           ### Slik spiller du
 
-          1. Last ned ``Fluesjakk-*-Setup.exe``
+          1. Last ned `Fluesjakk-{VERSJON}-Setup.exe`
           2. Kjør den og følg veiviseren (Windows kan vise en SmartScreen-advarsel — velg
              *Mer informasjon* → *Kjør likevel*; filen er ikke kodesignert)
           3. Åpne **Fluesjakk** fra startmenyen og spill
 
           Modellen følger med i pakken, så spillet virker uten internett fra første stund.
-          Vil du ikke installere, kan du laste ned zip-utgaven i stedet og pakke den ut hvor du vil.
+          Vil du ikke installere, kan du laste ned `Fluesjakk-{VERSJON}-Windows-x64.zip`
+          i stedet og pakke den ut hvor du vil.
+
+          ### Innhold
+
+          - Nytt norsk grensesnitt med egen visuell identitet og egne brettbrikker
+          - Tre vanskelighetsgrader: larve, flue og superflue
+          - Nevronaktiviteten og fluas fasettøyne tegnet opp mens den tenker
+          - Teknisk modus, innstillinger og en egen «Slik fungerer det»-side
+          - Windows-app som kjører helt lokalt, uten konto og uten sporing
 
           ### Sjekksummer
 
-          ```
-          $summer
+          {GJERDE}
+          {SUMMER}
+          {GJERDE}
+
+          Windows viser en SmartScreen-advarsel fordi programmet ikke er kodesignert.
+          Vil du bekrefte at filen er ekte, sammenlign med verdiene over:
+
+          ```powershell
+          Get-FileHash .\Fluesjakk-{VERSJON}-Setup.exe -Algorithm SHA256
           ```
 
           ### Lisens
 
           Koden er MIT. Modellvektene er avledet av FlyWire-connectomet og er CC BY-NC 4.0 —
-          ikke-kommersielt bruk med attribusjon. Se CREDITS.md.
-          "@
+          fritt til ikke-kommersielt bruk med attribusjon, men kan ikke selges.
+          Connectomet er FlyWire-konsortiets arbeid (Dorkenwald et al. 2024, Schlegel et al. 2024).
+          Se CREDITS.md i kodelageret for full attribusjon.
+          '@
+          $gjerde = '```'
+          $notat = $mal.Replace('{VERSJON}', $versjon).Replace('{SUMMER}', $summer).Replace('{GJERDE}', $gjerde)
           $notat | Out-File -FilePath NOTATER.md -Encoding utf8
           # Sjekksumfilen hører med i utgivelsen, ikke bare i artefaktbunken: den er den eneste
           # måten en bruker kan bekrefte at en usignert .exe er den vi faktisk bygde.
