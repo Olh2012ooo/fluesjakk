@@ -112,5 +112,7 @@ jobs:
           ikke-kommersielt bruk med attribusjon. Se CREDITS.md.
           "@
           $notat | Out-File -FilePath NOTATER.md -Encoding utf8
+          # Sjekksumfilen hører med i utgivelsen, ikke bare i artefaktbunken: den er den eneste
+          # måten en bruker kan bekrefte at en usignert .exe er den vi faktisk bygde.
           gh release create $tag --title "Fluesjakk $tag" --notes-file NOTATER.md `
-            (Get-ChildItem dist/*.exe, dist/*.zip | ForEach-Object { $_.FullName })
+            (Get-ChildItem dist/*.exe, dist/*.zip, dist/SHA256SUMS.txt | ForEach-Object { $_.FullName })
