@@ -41,7 +41,6 @@
         ]
       },
       {
-        "comment": "Lisens og kreditering følger med pakken: modellen i web/model/ er CC BY-NC 4.0 og krever attribusjon også utenfor kodelageret.",
         "from": "../LICENSE",
         "to": "LICENSE"
       },
