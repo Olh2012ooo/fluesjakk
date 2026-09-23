@@ -47,6 +47,10 @@
       {
         "from": "../CREDITS.md",
         "to": "CREDITS.md"
+      },
+      {
+        "from": "../THIRD-PARTY.md",
+        "to": "THIRD-PARTY.md"
       }
     ],
     "win": {

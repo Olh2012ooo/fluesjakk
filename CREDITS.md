@@ -21,7 +21,8 @@ nederst. Ingenting av dette er ment å fremstille andres arbeid som mitt eget.
 
 ## Teknisk grunnlag og eksterne komponenter
 
-Fluesjakk står på andres forskning og åpen kildekode. Dette er de delene, og hva de bidrar med:
+Fluesjakk står på andres forskning og åpen kildekode. Dette er de delene, og hva de bidrar med.
+Den formelle lisensoversikten står i [THIRD-PARTY.md](THIRD-PARTY.md).
 
 ### Connectomet — FlyWire
 

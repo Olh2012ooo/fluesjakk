@@ -476,7 +476,8 @@ bygger på FlyWire-connectomet.
 **python-chess** er GPL-3.0-or-later og brukes bare av Python-siden, som derfor ikke inngår i
 Windows-utgaven.
 
-Full oversikt i [CREDITS.md](CREDITS.md) og i [LICENSE](LICENSE).
+Full oversikt: [LICENSE](LICENSE) (MIT), [THIRD-PARTY.md](THIRD-PARTY.md) (data, modell og
+biblioteker) og [CREDITS.md](CREDITS.md) (hvem har laget hva).
 
 ---
 
