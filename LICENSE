@@ -1,7 +1,7 @@
 MIT License
 
 Copyright (c) 2026 Oliver Lysø Hellevik
-Copyright (c) 2026 Carlo Esposito — for de delene som er arvet fra prosjektet fly-chess
+Copyright (c) 2026 Carlo Esposito
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,18 +20,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-================================================================================
-Denne lisensen gjelder KODEN i dette prosjektet.
-
-Den gjelder ikke modellvektene, som er avledet av FlyWire-connectomet og er
-lisensiert under CC BY-NC 4.0 — fritt til ikke-kommersielt bruk med
-attribusjon, men ikke til salgs. Vektene ligger derfor ikke i dette
-kodelageret, men lastes ned separat.
-
-Den gjelder heller ikke tredjepartsbiblioteker og forskningsdata, som har sine
-egne vilkår.
-
-Full oversikt: THIRD-PARTY.md
-Attribusjon og sitater: CREDITS.md
-================================================================================
