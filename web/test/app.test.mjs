@@ -132,15 +132,18 @@ before(async () => {
   chrome = spawn(CHROME, ['--headless=new', '--no-sandbox', '--disable-gpu', '--hide-scrollbars', '--window-size=1400,900', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe'] });
   let feilutskrift = '';
   chrome.stderr?.on('data', (b) => { feilutskrift = (feilutskrift + b).slice(-2000); });
-  let targets = null;
-  // En kald nettleser på en lastet CI-runner kan bruke godt over ti sekunder på å åpne
-  // feilsøkingsporten, så vi venter tålmodig og sier fra om hva vi faktisk prøvde.
-  for (let i = 0; i < 600 && !targets; i++) {
+  // Vent til feilsøkingsporten svarer MED en ferdigregistrert side. Endepunktet begynner å svare
+  // før vinduet er registrert som target, så et svar alene er ikke nok — det var nettopp derfor
+  // dette var periodisk rødt i CI. En kald nettleser på en lastet runner kan dessuten bruke godt
+  // over ti sekunder, så vi venter tålmodig og sier fra om hva vi faktisk prøvde.
+  let side = null;
+  for (let i = 0; i < 600 && !side; i++) {
     if (chrome.exitCode !== null) break;
-    try { targets = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json(); } catch { await sleep(100); }
+    try { side = (await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()).find((t) => t.type === 'page') || null; } catch { /* porten er ikke åpen ennå */ }
+    if (!side) await sleep(100);
   }
-  assert.ok(targets, `nettleseren startet ikke (${CHROME}, avsluttet med kode ${chrome.exitCode})\n${feilutskrift}`);
-  const ws = new WebSocket(targets.find((t) => t.type === 'page').webSocketDebuggerUrl);
+  assert.ok(side, `nettleseren startet ikke (${CHROME}, avsluttet med kode ${chrome.exitCode})\n${feilutskrift}`);
+  const ws = new WebSocket(side.webSocketDebuggerUrl);
   await new Promise((r, j) => { ws.onopen = r; ws.onerror = j; });
   page = new Page(ws);
   await page.send('Runtime.enable'); await page.send('Page.enable');
