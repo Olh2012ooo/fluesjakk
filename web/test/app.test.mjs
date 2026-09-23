@@ -128,10 +128,18 @@ before(async () => {
   base = `http://127.0.0.1:${server.address().port}/`;
   profile = mkdtempSync(join(tmpdir(), 'fluesjakk-test-'));
   const port = 9400 + Math.floor(Math.random() * 400);
-  chrome = spawn(CHROME, ['--headless=new', '--no-sandbox', '--disable-gpu', '--hide-scrollbars', '--window-size=1400,900', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, 'about:blank'], { stdio: 'ignore' });
+  // stderr holdes åpen: når nettleseren ikke kommer opp, er det den eneste ledetråden vi har
+  chrome = spawn(CHROME, ['--headless=new', '--no-sandbox', '--disable-gpu', '--hide-scrollbars', '--window-size=1400,900', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe'] });
+  let feilutskrift = '';
+  chrome.stderr?.on('data', (b) => { feilutskrift = (feilutskrift + b).slice(-2000); });
   let targets = null;
-  for (let i = 0; i < 100 && !targets; i++) { try { targets = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json(); } catch { await sleep(100); } }
-  assert.ok(targets, 'chromium startet ikke');
+  // En kald nettleser på en lastet CI-runner kan bruke godt over ti sekunder på å åpne
+  // feilsøkingsporten, så vi venter tålmodig og sier fra om hva vi faktisk prøvde.
+  for (let i = 0; i < 600 && !targets; i++) {
+    if (chrome.exitCode !== null) break;
+    try { targets = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json(); } catch { await sleep(100); }
+  }
+  assert.ok(targets, `nettleseren startet ikke (${CHROME}, avsluttet med kode ${chrome.exitCode})\n${feilutskrift}`);
   const ws = new WebSocket(targets.find((t) => t.type === 'page').webSocketDebuggerUrl);
   await new Promise((r, j) => { ws.onopen = r; ws.onerror = j; });
   page = new Page(ws);

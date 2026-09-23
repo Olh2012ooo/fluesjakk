@@ -95,10 +95,8 @@ jobs:
       - name: Paritet
         run: node --test web/test/parity.test.mjs
 
-      - name: Grensesnittet mot den ekte modellen i en ekte nettleser
-        run: node --test web/test/app.test.mjs
-        env:
-          CHROME: /usr/bin/google-chrome
+      # Sidetestene kjører i nettleserjobben over. De serverer sin egen syntetiske modell og
+      # sier derfor ingenting om den ekte modellen — å kjøre dem her ville vært dobbeltarbeid.
 
       - name: Last opp avviksrapport ved feil
         if: failure()
